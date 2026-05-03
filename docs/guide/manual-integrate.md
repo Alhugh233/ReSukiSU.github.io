@@ -453,7 +453,7 @@ For kernel 6.8 (not included 6.8) and below, This hook can be automatically appl
 
 In this part, you should find `read` in `fs/read_write.c` and hook it. Note that for 4.19- kernels, you only need to hook `read`, and you can ignore `ksys_read` as it is implemented via `read` in those versions.
 
-## policy_rwlock export <Badge type="info" text="4.14- Optional"/> {#policy-rwlock-export}
+## policy_rwlock export <Badge type="info" text="4.17- Optional"/> {#policy-rwlock-export}
 
 ::: info Notes
 This is an optional patch,but it can improve memory management security on some devices. You can choose to apply it or not.
@@ -478,6 +478,8 @@ index b818410d2418..ea2f3022744f 100644
 
 In this part,it's easy to apply it by simply remove `static` from the definition of `policy_rwlock` in `security/selinux/ss/services.c`
 
+If this definition not found,please ignore this part.
+
 ## selinux_ops export <Badge type="info" text="4.2- Optional"/> {#selinux-ops-export}
 
 ::: info Notes
@@ -498,6 +500,26 @@ After this patch,if it's working fine,please **submit an issue** to ReSukiSU wit
 ```
 
 In this part,it's easy to apply it by simply remove `static` from the struct definition of `selinux_ops` in `security/selinux/hooks.c`
+
+## sel_mutex export <Badge type="info" text="4.17- Optional"/> {#sel-mutex-export}
+
+::: info Notes
+This is an optional patch,but it can solved some probably race problem on some devices.>
+:::
+
+```diff
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -41,23 +42,6 @@
+ #include "objsec.h"
+ #include "conditional.h
+-static DEFINE_MUTEX(sel_mutex);
++DEFINE_MUTEX(sel_mutex);
+```
+
+In this part,it's easy to apply it by simply remove `static` from the definition of `sel_mutex` in `security/selinux/selinuxfs.c`
+
+If this definition not found,please ignore this part.
 
 ## path_umount <Badge type="info" text="Optional"/> {#how-to-backport-path-umount}
 

@@ -454,7 +454,7 @@ index a3bef5bd..0b116d7c 100644
 
 在这部分中，你需要在 `fs/read_write.c` 中找到 `read` 的 `SYSCALL` 并 hook 它。
 
-## policy_rwlock export <Badge type="info" text="4.14- 可选"/> {#policy-rwlock-export}
+## policy_rwlock export <Badge type="info" text="4.17- 可选"/> {#policy-rwlock-export}
 
 ::: info Notes
 这是一个可选选项,但不修改这一部分可能会导致某些设备上内存管理方面的安全性问题
@@ -479,6 +479,8 @@ index b818410d2418..ea2f3022744f 100644
 
 在这部分中,修改相对较简单，仅需在 `security/selinux/ss/services.c` 中找到 `policy_rwlock` 的定义，并将其前面的 `static` 关键字去掉即可。
 
+如果没有找到该定义，请忽略这一部分。
+
 ## selinux_ops export <Badge type="info" text="4.2- 可选"/> {#selinux-ops-export}
 
 :::info Notes
@@ -500,6 +502,25 @@ index b818410d2418..ea2f3022744f 100644
 
 在这部分中,修改相对较简单，仅需在 `security/selinux/hooks.c` 中找到 `selinux_ops` 的结构体定义，并将其前面的 `static` 关键字去掉即可。
 
+## sel_mutex export <Badge type="info" text="4.17- 可选"/> {#sel-mutex-export}
+
+::: info Notes
+这是一个可选选项,但不修改这一部分可能会有潜在的竞速(race)问题
+:::
+
+```diff
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -41,23 +42,6 @@
+ #include "objsec.h"
+ #include "conditional.h
+-static DEFINE_MUTEX(sel_mutex);
++DEFINE_MUTEX(sel_mutex);
+```
+
+在这部分中,修改相对较简单，仅需在 `security/selinux/selinuxfs.c` 中找到 `sel_mutex` 的定义，并将其前面的 `static` 关键字去掉即可。
+
+如果没有找到该定义，请忽略这一部分。
 
 ## path_umount <Badge type="info" text="可选"/> {#how-to-backport-path-umount}
 
